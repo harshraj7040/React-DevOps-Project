@@ -1,0 +1,36 @@
+- hosts: all
+  become: true
+  vars:
+    ansible_user: azureuser
+    ansible_ssh_private_key_file: "C:\Users\HP\Downloads\Ansible_key (1).pem"  # Path to your SSH key
+  tasks:
+    - name: Install dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - nodejs
+        - npm
+
+    - name: Pull the React app from GitHub
+      git:
+        repo: "https://github.com/harshraj7040/React-DevOps-Project"
+        dest: /var/www/react-app
+        version: main
+
+    - name: Install React dependencies
+      command: npm install
+      args:
+        chdir: /var/www/react-app
+
+    - name: Build the React app
+      command: npm run build
+      args:
+        chdir: /var/www/react-app
+
+    - name: Serve the React app
+      command: serve -s build -l 5000
+      args:
+        chdir: /var/www/react-app
+      async: 1
+      poll: 0
