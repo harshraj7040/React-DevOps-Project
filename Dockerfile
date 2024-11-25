@@ -1,27 +1,20 @@
-# Use Node.js image to build the React app
-FROM node:16 as build
+# Use a lightweight Node.js image
+FROM node:18-slim
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and install dependencies
-COPY package.json ./
-RUN npm install
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
-# Copy the rest of the application code
-COPY . ./
+# Install dependencies in a separate layer for caching
+RUN npm install --legacy-peer-deps
 
-# Build the React app for production
-RUN npm run build
+# Copy the rest of the application files
+COPY . .
 
-# Use Nginx to serve the React app
-FROM nginx:alpine
+# Expose the application port (replace 3000 if using a different port)
+EXPOSE 3000
 
-# Copy the build files from the previous image
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start the Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Start the application
+CMD ["npm", "start"]
