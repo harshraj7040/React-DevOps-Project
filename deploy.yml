@@ -1,0 +1,32 @@
+---
+- name: Deploy React Website to EC2
+  hosts: localhost
+  vars:
+    git_hash: "{{ git_hash }}"  # Receives the git hash passed from Jenkins
+  tasks:
+    - name: Ensure Docker is installed
+      amazon.aws.aws_ec2_instance:
+        instance_ids:
+          - i-xxxxxxxxxxxxxxxxx
+      become: yes
+
+    - name: Pull Docker image from Docker Hub
+      docker_image:
+        name: demonharsh124/website
+        tag: "{{ git_hash }}"
+        source: pull
+
+    - name: Stop and remove any running container
+      docker_container:
+        name: react-website
+        state: absent
+        force: yes
+
+    - name: Run the Docker container
+      docker_container:
+        name: react-website
+        image: demonharsh124/website:{{ git_hash }}
+        state: started
+        restart_policy: always
+        published_ports:
+          - "80:80"

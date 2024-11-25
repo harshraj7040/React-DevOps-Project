@@ -17,5 +17,14 @@
     "postcss-loader": "^8.1.1",
     "source-map-loader": "^5.0.0",
     "style-loader": "^4.0.0"
-  }
+  },
+  "name": "personal-finance-tracker-main",
+  "version": "1.0.0",
+  "main": "temp.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
